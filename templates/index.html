@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta content="initial-scale=1, shrink-to-fit=no, width=device-width" name="viewport">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,500,500i,700,700i|Roboto+Mono:300,400,700|Roboto+Slab:300,400,700" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  
+  <!-- Add Material CSS, replace Bootstrap CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename ='css/material.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename ='css/home.css') }}">
+  <link rel="stylesheet" href="assets/css/home.css">
+  <title>Registrar Archivo con Python</title>
+  <link type="text/css" rel="shortcut icon" href="{{ url_for('static', filename ='imgs/logo.png') }}"/>
+  <style>
+    img {
+      max-width: 100%;
+      height: auto;
+      border: 2px solid #000000; /* color morado */
+      border-radius: 5px; /* border redondeado */
+    }
+    section {
+      top: 0;
+      margin-top: -16px;
+      width: 100%;
+      color: #ffffff;
+      background-color: #6139ab; /* color azul */
+    }
+    #image-preview {
+      margin-top: 20px;
+      text-align: center;
+    }
+    #image-preview img {
+      max-width: 80%; /* ajuste del tamaño de la imagen */
+      height: auto;
+      margin-top: 10px;
+    }
+    .logo {
+      max-width: 25%; /* ajuste del tamaño del logotipo */
+    }
+  </style>
+</head>
+<body>
+
+<section>
+  <h2 class="text-center mt-3">Asistente Virtual<hr></h2>
+</section>
+
+<div class="text-center">
+  <img src="{{ url_for('static', filename ='imgs/logo.png') }}" class="rounded logo" alt="Python">
+</div>
+
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-12" style="padding:50px 50px;">
+      <form action="{{ url_for('registarArchivo') }}" method="POST" autocomplete="off" enctype="multipart/form-data">
+        <div class="custom-file mb-4">
+          <input type="file" name="archivo" class="custom-file-input" id="file-input" required>
+          <label class="custom-file-label" for="file-input">Seleccionar Imagen...</label>
+        </div>
+        <div id="image-preview"></div>
+        <div class="form-group mb-5 text-center mt-5">
+          <button type="submit" class="btn btn-primary btn-sm">Iniciar Bot</button>
+        </div>
+      </form>
+      <!-- Botón para detener el bucle -->
+      <div class="form-group mb-5 text-center mt-5">
+        <button id="stop-btn" class="btn btn-danger btn-sm">Detener</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.0.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<script>
+  $('#file-input').change(function() {
+    var input = this;
+    var url = $(this).val();
+    var ext = url.substring(url.lastIndexOf('.') + 1).toLowerCase();
+    if (input.files && input.files[0] && (ext == "gif" || ext == "png" || ext == "jpeg" || ext == "jpg")) {
+      var reader = new FileReader();
+
+      reader.onload = function(e) {
+        $('#image-preview').html('<img src="' + e.target.result + '">');
+      };
+
+      reader.readAsDataURL(input.files[0]);
+    } else {
+      $('#image-preview').html('');
+    }
+  });
+
+  // Script para manejar el clic en el botón "Detener Bucle"
+  $('#stop-btn').click(function() {
+    $.ajax({
+      url: '/stop-loop',
+      type: 'POST',
+      success: function(response) {
+        alert(response.message);
+      },
+      error: function(error) {
+        console.error('Error:', error);
+      }
+    });
+  });
+</script>
+
+</body>
+</html>
